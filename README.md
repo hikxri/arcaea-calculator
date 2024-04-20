@@ -22,7 +22,8 @@ I recommend making a backup of the .csv file in case the application goes bonker
 
 If you simply want to use the application without making any significant changes to the source code, follow these steps.
 
-1. Click on the green `Code` button and select `Download ZIP`.
+1. Download the `Arcaea-Calculator.zip` file from
+   the [releases](https://github.com/hikxri/arcaea-calculator/releases/latest) page.
 2. Extract the ZIP contents to a location of your choice.
 3. Run the executable file `Arcaea Calculator.exe`
    from there.
@@ -58,6 +59,8 @@ Now you can make improvements to the source code!
           a.k.a. B30.
         - (Optional) **Enter the username to be shown** in the result image. The username is saved and will be
           automatically inputted upon launching the application again.
+        - (Optional) **Enter the potential to be shown** in the result image. It will be shown on the left of the
+          username. If there exists no username, it will be shown in the middle, below the title.
         - **Click the `Top 30 Entries`** (or`Top n entries`) **button**. A new window will pop up with a scaled-down
           version of the result image.
         - **Click the `Save image` button** on the new window to download the full-resolution image.
@@ -67,15 +70,17 @@ Now you can make improvements to the source code!
 
 If some song jacket files are missing, feel free to add them yourself in the `arcaea_song_files` directory. The song
 jacket file has to meet these following criteria:
+
 - The file extension is `.jpg`.
 - The file name is in lower-case.
-  - For example, `HELLOHELL.jpg` &#8594; `hellohell.jpg`
-- All spaces are replaced with underscores 
-  - For example, `Abstruse Dilemma.jpg` &#8594; `abstruse_dilemma.jpg`
+    - For example, `HELLOHELL.jpg` &#8594; `hellohell.jpg`
+- All spaces are replaced with underscores
+    - For example, `Abstruse Dilemma.jpg` &#8594; `abstruse_dilemma.jpg`
 - The following symbols are removed:
-  - `!`, `*`, `#`, `[`, `]`, `?`, `:`, `,`, `|`
-- For non-unicode song names, add another item with the updated, unicode-friendly song name.
-  - For example, `{ ..., "ω4": "w4"}`
+    - `!`, `*`, `#`, `[`, `]`, `?`, `:`, `,`, `|`
+- For non-unicode song names, add another item with the updated, unicode-friendly song name in the `nonunicode.json`
+  file.
+    - For example, `{ ..., "ω4": "w4"}`
 
 ## Contributing
 
