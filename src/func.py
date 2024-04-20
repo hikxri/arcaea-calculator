@@ -5,6 +5,32 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import QImage, QPixmap, QPainter, QColor
 
 
+def getPotentialColor(potential):
+    try:
+        potential = float(potential)
+
+        if potential >= 13.00:
+            return 207, 67, 118
+        elif potential >= 12.50:
+            return 174, 17, 96
+        elif potential >= 12.00:
+            return 207, 103, 122
+        elif potential >= 11.00:
+            return 169, 18, 46
+        elif potential >= 10.00:
+            return 166, 83, 173
+        elif potential >= 7.00:
+            return 124, 55, 135
+        elif potential >= 3.50:
+            return 73, 177, 215
+        else:
+            return 63, 137, 148
+
+    except Exception as e:
+        print(e)
+        return 121, 121, 121
+
+
 def saveUsername(username):
     json_file = open("save_data.json", mode='r', encoding='utf-8')
     save_dict = json.load(json_file)

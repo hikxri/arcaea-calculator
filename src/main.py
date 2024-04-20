@@ -12,7 +12,7 @@ mention / credit me if you publish it online
 import sys
 import math
 from PyQt6.QtCore import Qt, QRect, QPoint
-from PyQt6.QtGui import QFont, QIntValidator, QFontMetrics
+from PyQt6.QtGui import QFont, QIntValidator, QDoubleValidator, QFontMetrics
 from func import *
 
 
@@ -37,13 +37,15 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
         self.painter = QPainter()
         self.full_size_pixmap = QPixmap()
 
-    def generate_b30(self, song_data, background_file, username, censored=False):
+    def generate_b30(self, song_data, background_file, username, potential, censored=False):
         # initialization
         # set grid parameters
         num_cols = 5  # 6x5 grid
         num_rows = math.ceil(len(song_data) / 5)
         x_dist = 335
         y_dist = 272
+
+        font_width = 0
 
         # set pixmap parameters
         width = 1800
@@ -98,19 +100,55 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
             username_rect = QRect(0, 212, width, 100)
             self.drawTextWithOutLine(username_rect, Qt.AlignmentFlag.AlignCenter, f"{username}")
 
+        # potential
+        if potential:
+            if username:
+                left_point = (width // 2 - font_width - 150, 264)
+                potential_points = [
+                    QPoint(left_point[0], left_point[1]),  # <
+                    QPoint(left_point[0] + 45, left_point[1] + 45),  # v
+                    QPoint(left_point[0] + 45 * 2, left_point[1]),  # >
+                    QPoint(left_point[0] + 45, left_point[1] - 45)  # ^
+                ]
+                potential_rect = QRect(left_point[0] - 40, left_point[1] - 53,
+                                       170, 100)
+
+            else:
+                mid_point = (width // 2, 264)
+                potential_points = [
+                    QPoint(mid_point[0] + 45, mid_point[1]),
+                    QPoint(mid_point[0], mid_point[1] - 45),
+                    QPoint(mid_point[0] - 45, mid_point[1]),
+                    QPoint(mid_point[0], mid_point[1] + 45)
+                ]
+                potential_rect = QRect(mid_point[0] - 100, mid_point[1] - 53, 200, 100)
+
+            r, g, b = getPotentialColor(potential)
+            self.painter.setBrush(QColor(r, g, b, 255))
+            font.setPointSize(30)
+            self.painter.setFont(font)
+            self.painter.drawPolygon(potential_points, Qt.FillRule.OddEvenFill)
+            self.drawTextWithOutLine(potential_rect, Qt.AlignmentFlag.AlignCenter, f"{float(potential):.2f}",
+                                     black=QColor(77, 56, 75, 255))
+            self.painter.setBrush(QColor(199, 199, 211, 200))
+
         # average play ptt
         font.setPointSize(30)
         self.painter.setFont(font)
         avg_rect = QRect(990, 210, 700, 50)
+        if len(song_data) == 30:
+            avg_str = f"Average play potential: {getAveragePlayPotential(song_data):.3f}"
+        else:
+            avg_str = f"B{len(song_data)} play potential: {getAveragePlayPotential(song_data):.3f}"
         self.drawTextWithOutLine(avg_rect, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop,
-                                 f"Average play potential: {getAveragePlayPotential(song_data):.3f}")
+                                 avg_str)
 
         # max play ptt
         max_rect = QRect(990, 255, 700, 50)
         if len(song_data) == 30:
             max_str = f"Max play potential: {getMaxPlayPotential(song_data):.3f}"
         else:
-            max_str = f"Max play potential: -"
+            max_str = f"B30 play potential: {getAveragePlayPotential(song_data[:30]):.3f}"
         self.drawTextWithOutLine(max_rect, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop, max_str)
 
         for i, song in enumerate(song_data):
@@ -136,7 +174,7 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
                 index_color = QColor(130, 130, 130, 255)
             self.painter.fillRect(76 + x_dist * col, 364 + y_dist * row, 84, 48, index_color)
             index_rect = QRect(88 + x_dist * col, 372 + y_dist * row, 60, 40)
-            self.painter.setPen(QColor(80, 80, 80, 200))  # black shadow
+            self.painter.setPen(QColor(60, 80, 120, 200))  # black shadow
             self.painter.drawText(index_rect.translated(4, 4),
                                   Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop, f"#{i + 1}")
             self.painter.setPen(QColor(255, 255, 255, 255))
@@ -147,21 +185,21 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
             font.setPointSize(25)
             self.painter.setFont(font)
             potential = round(float(song[8]), 2)
-            potential_rect = QRect(90 + x_dist * col, 415 + y_dist * row, 100, 40)
-            self.drawTextWithOutLine(potential_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop,
+            potential_rect = QRect(90 + x_dist * col, 415 + y_dist * row, 82, 40)
+            self.drawTextWithOutLine(potential_rect, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop,
                                      f"{potential:.2f}")
 
             # chart constant
             font.setPointSize(20)
             self.painter.setFont(font)
             cc = song[3]
-            cc_rect = QRect(92 + x_dist * col, 455 + y_dist * row, 100, 40)
-            self.drawTextWithOutLine(cc_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, f"({cc})")
+            cc_rect = QRect(90 + x_dist * col, 455 + y_dist * row, 82, 40)
+            self.drawTextWithOutLine(cc_rect, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop, f"({cc})")
 
             # song jacket
             self.painter.fillRect(180 + x_dist * col, 362 + y_dist * row, 182, 182, QColor(41, 27, 57, 255))
             if not censored and jacket_file:
-                jacket_pixmap = QPixmap(f"arcaea_song_files/{jacket_file}")\
+                jacket_pixmap = QPixmap(f"arcaea_song_files/{jacket_file}") \
                     .scaled(174, 174, transformMode=Qt.TransformationMode.SmoothTransformation)
                 self.painter.drawPixmap(184 + x_dist * col, 366 + y_dist * row, jacket_pixmap)
             else:
@@ -189,15 +227,15 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
                 self.painter.setBrush(QColor(216, 211, 145, 255))
             if song[1] == "PST":
                 self.painter.setBrush(QColor(73, 177, 215, 255))
-            right_point = (334, 352)
+            left_point = (334, 352)
             diamond_points = [
-                QPoint(right_point[0] + x_dist * col, right_point[1] + y_dist * row),  # <
-                QPoint(right_point[0] + 34 + x_dist * col, right_point[1] + 34 + y_dist * row),  # v
-                QPoint(right_point[0] + 34 * 2 + x_dist * col, right_point[1] + y_dist * row),  # >
-                QPoint(right_point[0] + 34 + x_dist * col, right_point[1] - 34 + y_dist * row)  # ^
+                QPoint(left_point[0] + x_dist * col, left_point[1] + y_dist * row),  # <
+                QPoint(left_point[0] + 34 + x_dist * col, left_point[1] + 34 + y_dist * row),  # v
+                QPoint(left_point[0] + 34 * 2 + x_dist * col, left_point[1] + y_dist * row),  # >
+                QPoint(left_point[0] + 34 + x_dist * col, left_point[1] - 34 + y_dist * row)  # ^
             ]
             self.painter.drawPolygon(diamond_points, Qt.FillRule.OddEvenFill)
-            difficulty_rect = QRect(right_point[0] + x_dist * col, right_point[1] - 36 + y_dist * row,
+            difficulty_rect = QRect(left_point[0] + x_dist * col, left_point[1] - 36 + y_dist * row,
                                     34 * 2, 34 * 2)
             self.painter.setPen(QColor(80, 80, 80, 200))  # black shadow
             self.painter.drawText(difficulty_rect.translated(4, 4), Qt.AlignmentFlag.AlignCenter, song[2])
@@ -216,19 +254,19 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
 
             # grade
             self.painter.setBrush(QColor(199, 199, 211, 200))
-            right_point = (95, 520)
+            left_point = (95, 520)
             grade_points = [
-                QPoint(right_point[0] + x_dist * col, right_point[1] + y_dist * row),  # <
-                QPoint(right_point[0] + 23 + x_dist * col, right_point[1] + 23 + y_dist * row),  # v
-                QPoint(right_point[0] + 23 + x_dist * col + 30, right_point[1] + 23 + y_dist * row),  # _
-                QPoint(right_point[0] + 23 * 2 + x_dist * col + 30, right_point[1] + y_dist * row),  # >
-                QPoint(right_point[0] + 23 + x_dist * col + 30, right_point[1] - 23 + y_dist * row),  # ^
-                QPoint(right_point[0] + 23 + x_dist * col, right_point[1] - 23 + y_dist * row)  # -
+                QPoint(left_point[0] + x_dist * col, left_point[1] + y_dist * row),  # <
+                QPoint(left_point[0] + 23 + x_dist * col, left_point[1] + 23 + y_dist * row),  # v
+                QPoint(left_point[0] + 23 + x_dist * col + 30, left_point[1] + 23 + y_dist * row),  # _
+                QPoint(left_point[0] + 23 * 2 + x_dist * col + 30, left_point[1] + y_dist * row),  # >
+                QPoint(left_point[0] + 23 + x_dist * col + 30, left_point[1] - 23 + y_dist * row),  # ^
+                QPoint(left_point[0] + 23 + x_dist * col, left_point[1] - 23 + y_dist * row)  # -
             ]
             self.painter.drawPolygon(grade_points, Qt.FillRule.OddEvenFill)
             font.setPointSize(24)
             self.painter.setFont(font)
-            grade_rect = QRect(right_point[0] + x_dist * col, right_point[1] - 23 + y_dist * row,
+            grade_rect = QRect(left_point[0] + x_dist * col, left_point[1] - 23 + y_dist * row,
                                76, 40)
             grade = getGradeLevel(score)
             self.drawTextWithOutLine(grade_rect, Qt.AlignmentFlag.AlignCenter, grade,
@@ -312,6 +350,8 @@ class MainWindow(QMainWindow):
         self.selectedBg = "bg1.jpg"
         self.entriesCount = 30
         self.selectedUsername = loadUsername()
+        self.confirm = True
+        self.selectedPotential = ""
         # print(self.songList)
 
         # - window stuff
@@ -348,11 +388,16 @@ class MainWindow(QMainWindow):
         self.scoreField.setMaxLength(8)  # max score is 10'00X'XXX
         self.scoreField.setPlaceholderText("Enter score here... (No spaces or commas)")
         self.scoreField.textEdited.connect(self.setScore)
+        self.scoreField.returnPressed.connect(self.addScore)
         self.scoreValidator = QIntValidator(0, 20_000_000)
         self.scoreField.setValidator(self.scoreValidator)
 
         self.addButton = QPushButton("Add score")
         self.addButton.clicked.connect(self.addScore)
+
+        self.confirmButton = QPushButton("Auto-confirmation")
+        self.confirmButton.setCheckable(True)
+        self.confirmButton.clicked.connect(self.setConfirm)
 
         self.b30Button = QPushButton("Top 30 Entries")
         self.b30Button.clicked.connect(self.showB30)
@@ -377,27 +422,37 @@ class MainWindow(QMainWindow):
         self.usernameField.setText(self.selectedUsername)
         self.usernameField.textEdited.connect(self.setUsername)
 
+        self.potentialField = QLineEdit()
+        self.potentialField.setMaxLength(5)
+        self.potentialField.setPlaceholderText("Enter your potential here...")
+        self.potentialField.textEdited.connect(self.setPotential)
+        self.potentialValidator = QDoubleValidator(0.0, 14.0, 2)
+        self.potentialField.setValidator(self.potentialValidator)
+
         self.resultLabel = QLabel("")
 
         # -- initialize button states
         self.setFile(start=True)
         self.setSong(self.selectedSong)
         self.difficultyButtons[2].setChecked(True)  # initial difficulty is FTR
+        self.confirmButton.setChecked(True)  # auto-confirmation is disabled
 
         # -- add widgets to layout
-        layout.addWidget(self.fileButton,           0, 0, 1, 2)
-        layout.addWidget(self.fileLabel,            0, 2, 1, 3)
-        layout.addWidget(self.songDropdown,         1, 0, 1, 5)
+        layout.addWidget(self.fileButton, 0, 0, 1, 2)
+        layout.addWidget(self.fileLabel, 0, 2, 1, 3)
+        layout.addWidget(self.songDropdown, 1, 0, 1, 5)
         for index, button in enumerate(self.difficultyButtons):
             layout.addWidget(button, 2, index)
-        layout.addWidget(self.scoreField,           3, 0, 1, 5)
-        layout.addWidget(self.addButton,            4, 0, 1, 3)
-        layout.addWidget(self.b30Button,            4, 3, 1, 2)
-        layout.addWidget(self.b30Censored,          5, 3, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.bgDropdown,           5, 4, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.entriesField,         6, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.usernameField,        7, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.resultLabel,          5, 0, 5, 3, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.scoreField, 3, 0, 1, 5)
+        layout.addWidget(self.addButton, 4, 0, 1, 3)
+        layout.addWidget(self.confirmButton, 5, 0, 1, 3)
+        layout.addWidget(self.b30Button, 4, 3, 1, 2)
+        layout.addWidget(self.b30Censored, 5, 3, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.bgDropdown, 5, 4, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.entriesField, 6, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.usernameField, 7, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.potentialField, 8, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.resultLabel, 6, 0, 5, 3, alignment=Qt.AlignmentFlag.AlignTop)
 
         # -- add layout to window
         widget = QWidget()
@@ -407,6 +462,12 @@ class MainWindow(QMainWindow):
         self.imageWindow = ImageWindow()
 
     # these functions are not ordered at all lmao, i just add them as i go on
+    def setPotential(self, s):
+        self.selectedPotential = s
+
+    def setConfirm(self, checked):
+        self.confirm = checked
+
     def setUsername(self, s):
         self.selectedUsername = s
         saveUsername(s)
@@ -456,35 +517,41 @@ class MainWindow(QMainWindow):
         # b30 = getB30(self.scores)
         top_entries = getTopEntries(self.scores, self.entriesCount)
 
-        image_pixmap = self.imageWindow.generate_b30(top_entries, self.selectedBg,
-                                                     self.selectedUsername, censored=self.censored)
+        image_pixmap = self.imageWindow.generate_b30(top_entries, self.selectedBg, self.selectedUsername,
+                                                     self.selectedPotential, censored=self.censored)
 
         self.imageWindow.label_image.setPixmap(image_pixmap)
         self.imageWindow.show()
 
     def addScore(self):
-        question_box = QMessageBox()
-        question_box.setIcon(QMessageBox.Icon.Question)
-        choice = question_box.question(self, "?", "Are you sure?",
-                                       QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
-        if choice == QMessageBox.StandardButton.Yes:
-            try:
-                self.calculatePTT()  # if error occurs then it won't write
-                index = getSongIndex(self.scores, self.selectedSong, self.selectedDifficulty)
-                # new score must be greater than old score
-                # print(stringToInt(self.scores[index][4]))
-                if int(self.selectedScore) > stringToInt(self.scores[index][4]):
-                    self.writeNewScore(index, int(self.selectedScore))
-                    self.resultLabel.setText("Score added!")
-                else:
-                    self.resultLabel.setText("Score is not added!"
-                                             "\nScore is less than or equal to old score.")
+        if self.confirm:
+            question_box = QMessageBox()
+            question_box.setIcon(QMessageBox.Icon.Question)
+            choice = question_box.question(self, "?", "Are you sure?",
+                                           QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+            if choice == QMessageBox.StandardButton.Yes:
+                self.addNewScore()
+        else:
+            self.addNewScore()
 
-            except Exception as e:
-                error_box = QMessageBox()
-                error_box.setIcon(QMessageBox.Icon.Critical)
-                error_box.setText("Oh no! An error occurred!")
-                print(e)
+    def addNewScore(self):
+        try:
+            self.calculatePTT()  # if error occurs then it won't write
+            index = getSongIndex(self.scores, self.selectedSong, self.selectedDifficulty)
+            # new score must be greater than old score
+            # print(stringToInt(self.scores[index][4]))
+            if int(self.selectedScore) > stringToInt(self.scores[index][4]):
+                self.writeNewScore(index, int(self.selectedScore))
+                self.resultLabel.setText("Score added!")
+            else:
+                self.resultLabel.setText("Score is not added!"
+                                         "\nScore is less than or equal to old score.")
+
+        except Exception as e:
+            error_box = QMessageBox()
+            error_box.setIcon(QMessageBox.Icon.Critical)
+            error_box.setText("Oh no! An error occurred!")
+            print(e)
 
     def calculatePTT(self):
         if not self.selectedScore:
@@ -517,8 +584,10 @@ class MainWindow(QMainWindow):
             self.resultLabel.setText(f"Song: {self.selectedSong}\n"
                                      f"Chart constant: {calc[1]} ({self.scores[calc[0]][2]})\n"
                                      f"Score: {calc[2]:,}".replace(",", "'") + f" ({score_diff_str})\n"
-                                     f"Play rating: {round(calc[3], 3)} ({round(calc[3], 6)})\n"
-                                     f"Play potential: {round(calc[4], 3)} ({round(calc[4], 6)})\n")
+                                                                               f"Play rating: {round(calc[3], 3)}"
+                                                                               f"({round(calc[3], 6)})\n"
+                                                                               f"Play potential: {round(calc[4], 3)}"
+                                                                               f"({round(calc[4], 6)})\n")
 
     def setDifficulty(self, index, checked):
         # uncheck other difficulty select buttons
