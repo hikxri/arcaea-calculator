@@ -30,7 +30,7 @@ If you simply want to use the application without making any significant changes
 
 #### For Outdated Data
 
-If the files from the [releases](https://github.com/hikxri/arcaea-calculator/releases/latest) page is
+If the files from the [releases](https://github.com/hikxri/arcaea-calculator/releases/latest) page are
 outdated:
 
 1. Download the [scores.csv](scores.csv), [nonunicode.json](nonunicode.json), and `arcaea_song_files` files from
