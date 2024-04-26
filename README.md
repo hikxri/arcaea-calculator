@@ -4,7 +4,7 @@ A simple UI to input your Arcaea scores and generate your top entries as an imag
 on [Arcaea B30 Calculator (community)](https://docs.google.com/spreadsheets/d/1RJkupRtpRxxrTrMpb0VwCLZzOU0JtX_jsuo8xUnEO1k/edit?usp=sharing)
 by [u/Chibu68_](https://www.reddit.com/user/Chibu68_/) and [u/hokandor7](https://www.reddit.com/user/hokandor7/).
 
-The `scores.csv` blank template is updated as per Arcaea v5.6.0.
+The [scores.csv](scores.csv) blank template is updated as per `Arcaea v5.6.0`.
 
 For users, I recommend reading [**Installation: For Users**](#for-users) and [**Usage**](#usage)
 to help you get started!
@@ -27,6 +27,15 @@ If you simply want to use the application without making any significant changes
 2. Extract the ZIP contents to a location of your choice.
 3. Run the executable file `Arcaea Calculator.exe`
    from there.
+
+#### For Outdated Data
+
+If the files from the [releases](https://github.com/hikxri/arcaea-calculator/releases/latest) page is
+outdated:
+
+1. Download the [scores.csv](scores.csv), [nonunicode.json](nonunicode.json), and `arcaea_song_files` files from
+   the repository.
+2. Replace the outdated files with the downloaded files.
 
 ### For Contributors
 
