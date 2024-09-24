@@ -4,7 +4,7 @@ A simple UI to input your Arcaea scores and generate your top entries as an imag
 on [Arcaea B30 Calculator (community)](https://docs.google.com/spreadsheets/d/1RJkupRtpRxxrTrMpb0VwCLZzOU0JtX_jsuo8xUnEO1k/edit?usp=sharing)
 by [u/Chibu68_](https://www.reddit.com/user/Chibu68_/) and [u/hokandor7](https://www.reddit.com/user/hokandor7/).
 
-The [scores.csv](scores.csv) blank template is updated as per `Arcaea v5.7.0`.
+The [scores.csv](scores.csv) blank template is updated as per `Arcaea v5.10.2`.
 
 For users, I recommend reading [**Installation: For Users**](#for-users) and [**Usage**](#usage)
 to help you get started!
