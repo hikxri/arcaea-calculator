@@ -1,10 +1,8 @@
 # Arcaea Score Manager and B30 Generator
 
-A simple UI to input your Arcaea scores and generate your top entries as an image file. This application is based
-on [Arcaea B30 Calculator (community)](https://docs.google.com/spreadsheets/d/1RJkupRtpRxxrTrMpb0VwCLZzOU0JtX_jsuo8xUnEO1k/edit?usp=sharing)
-by [u/Chibu68_](https://www.reddit.com/user/Chibu68_/) and [u/hokandor7](https://www.reddit.com/user/hokandor7/).
+A simple UI to input your Arcaea scores and generate your top entries as an image file. This is intended to be used with the **[Arcaea B30 Spreadsheet](https://docs.google.com/spreadsheets/d/1DsIGnVUOarLeUtdpEjA3Wr8O0kvy-8lSCaWkLVOPSv8/edit?usp=sharing)**. For more information, please see [**Usage: Usage With The Spreadsheet**](#usage-with-the-spreadsheet).
 
-The [scores.csv](scores.csv) blank template is updated as per `Arcaea v5.10.2`.
+The [scores.csv](scores.csv) blank template is updated as per `Arcaea v6.0.0`.
 
 For users, I recommend reading [**Installation: For Users**](#for-users) and [**Usage**](#usage)
 to help you get started!
@@ -91,6 +89,9 @@ jacket file has to meet these following criteria:
   file.
     - For example, `{ ..., "ω4": "w4"}`
 
+## Usage With The Spreadsheet
+Instead of inputting scores using the program, you can use the **[Arcaea B30 Spreadsheet](https://docs.google.com/spreadsheets/d/1DsIGnVUOarLeUtdpEjA3Wr8O0kvy-8lSCaWkLVOPSv8/edit?usp=sharing)**. For more information on how to use it, please read the **Instructions** sheet of the spreadsheet. For how to use with the program, read the **To use with The Program™** section of the sheet.
+
 ## Contributing
 
 Contributions are welcome with open hands! If you find any bugs or have suggestions, please open an issue or submit a
@@ -100,7 +101,9 @@ pull request.
 
 Additionally, suggestions and feedback can be sent directly to me at:
 
-- Discord: sakurahikxri
+- sakurahikxri on Discord
+- @sakurahikxri.bsky.social on Bluesky
+- @sakurahikxri on Twitter (X)
 
 ## License
 
