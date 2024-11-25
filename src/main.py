@@ -37,11 +37,11 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
         self.painter = QPainter()
         self.full_size_pixmap = QPixmap()
 
-    def generate_b30(self, song_data, background_file, username, potential, censored=False):
+    def generate_b30(self, song_data, length, background_file, username, potential, censored=False):
         # initialization
         # set grid parameters
         num_cols = 5  # 6x5 grid
-        num_rows = math.ceil(len(song_data) / 5)
+        num_rows = math.ceil(length / 5)
         x_dist = 335
         y_dist = 272
 
@@ -75,7 +75,7 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
         font.setPointSize(70)
         self.painter.setFont(font)
         header_rect = QRect(0, 0, width, 300)
-        self.drawTextWithOutLine(header_rect, Qt.AlignmentFlag.AlignCenter, f"Top {len(song_data)} Entries")
+        self.drawTextWithOutLine(header_rect, Qt.AlignmentFlag.AlignCenter, f"Top {length} Entries")
         font.setBold(False)
 
         # username
@@ -136,22 +136,22 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
         font.setPointSize(30)
         self.painter.setFont(font)
         avg_rect = QRect(990, 210, 700, 50)
-        if len(song_data) == 30:
+        if length == 30:
             avg_str = f"Average play potential: {getAveragePlayPotential(song_data):.3f}"
         else:
-            avg_str = f"B{len(song_data)} play potential: {getAveragePlayPotential(song_data):.3f}"
+            avg_str = f"B{length} play potential: {getAveragePlayPotential(song_data[:length]):.3f}"
         self.drawTextWithOutLine(avg_rect, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop,
                                  avg_str)
 
         # max play ptt
         max_rect = QRect(990, 255, 700, 50)
-        if len(song_data) == 30:
+        if length == 30:
             max_str = f"Max play potential: {getMaxPlayPotential(song_data):.3f}"
         else:
             max_str = f"B30 play potential: {getAveragePlayPotential(song_data[:30]):.3f}"
         self.drawTextWithOutLine(max_rect, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop, max_str)
 
-        for i, song in enumerate(song_data):
+        for i, song in enumerate(song_data[:length]):
             col = i % num_cols
             row = i // num_cols
 
@@ -199,7 +199,7 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
             # song jacket
             self.painter.fillRect(180 + x_dist * col, 362 + y_dist * row, 182, 182, QColor(41, 27, 57, 255))
             if not censored and jacket_file:
-                jacket_pixmap = QPixmap(f"arcaea_song_files/{jacket_file}") \
+                jacket_pixmap = QPixmap(os.path.join(os.path.dirname(__file__), "arcaea_song_files", jacket_file)) \
                     .scaled(174, 174, transformMode=Qt.TransformationMode.SmoothTransformation)
                 self.painter.drawPixmap(184 + x_dist * col, 366 + y_dist * row, jacket_pixmap)
             else:
@@ -287,7 +287,7 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
                              transformMode=Qt.TransformationMode.SmoothTransformation)
 
     def drawBackgroundImage(self, background_file, width, height):
-        bg_pixmap = QPixmap(f"backgrounds/{background_file}")
+        bg_pixmap = QPixmap(os.path.join(os.path.dirname(__file__), "backgrounds", background_file))
         w = bg_pixmap.rect().width()
         h = bg_pixmap.rect().height()
         if w / h < 1:  # portrait
@@ -323,7 +323,9 @@ class ImageWindow(QWidget):  # chatGPT wrote the basis of this code lol
 
         if file_path and self.full_size_pixmap:
             self.full_size_pixmap.save(file_path, "PNG")
-            print("Image saved successfully.")
+            done_box = QMessageBox()
+            done_box.setIcon(QMessageBox.Icon.Information)
+            done_box.information(self, "Image saved!", "Image successfully saved!")
 
 
 class MainWindow(QMainWindow):
@@ -443,16 +445,16 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.songDropdown, 1, 0, 1, 5)
         for index, button in enumerate(self.difficultyButtons):
             layout.addWidget(button, 2, index)
-        layout.addWidget(self.scoreField, 3, 0, 1, 5)
-        layout.addWidget(self.addButton, 4, 0, 1, 3)
-        layout.addWidget(self.confirmButton, 5, 0, 1, 3)
-        layout.addWidget(self.b30Button, 4, 3, 1, 2)
-        layout.addWidget(self.b30Censored, 5, 3, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.bgDropdown, 5, 4, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.entriesField, 6, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.usernameField, 7, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.potentialField, 8, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.resultLabel, 6, 0, 5, 3, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.scoreField,                   3, 0, 1, 5)
+        layout.addWidget(self.addButton,                    4, 0, 1, 3)
+        layout.addWidget(self.confirmButton,                5, 0, 1, 3)
+        layout.addWidget(self.b30Button,                    4, 3, 1, 2)
+        layout.addWidget(self.b30Censored,                  5, 3, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.bgDropdown,                   5, 4, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.entriesField,                 6, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.usernameField,                7, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.potentialField,               8, 3, 1, 2, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.resultLabel,                  6, 0, 5, 3, alignment=Qt.AlignmentFlag.AlignTop)
 
         # -- add layout to window
         widget = QWidget()
@@ -515,10 +517,14 @@ class MainWindow(QMainWindow):
 
     def showB30(self):
         # b30 = getB30(self.scores)
-        top_entries = getTopEntries(self.scores, self.entriesCount)
+        if self.entriesCount < 30:
+            top_entries = getTopEntries(self.scores, 30)
+        else:
+            top_entries = getTopEntries(self.scores, self.entriesCount)
 
-        image_pixmap = self.imageWindow.generate_b30(top_entries, self.selectedBg, self.selectedUsername,
-                                                     self.selectedPotential, censored=self.censored)
+        image_pixmap = self.imageWindow.generate_b30(top_entries, self.entriesCount, self.selectedBg,
+                                                     self.selectedUsername, self.selectedPotential,
+                                                     censored=self.censored)
 
         self.imageWindow.label_image.setPixmap(image_pixmap)
         self.imageWindow.show()

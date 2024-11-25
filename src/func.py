@@ -5,6 +5,13 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import QImage, QPixmap, QPainter, QColor
 
 
+def listDir(path):
+    return os.listdir(os.path.join(os.path.dirname(__file__), path))
+
+def openJson(path, mode, encoding):
+    return open(os.path.join(os.path.dirname(__file__), path), mode=mode, encoding=encoding)
+
+
 def getPotentialColor(potential):
     try:
         potential = float(potential)
@@ -32,18 +39,18 @@ def getPotentialColor(potential):
 
 
 def saveUsername(username):
-    json_file = open("save_data.json", mode='r', encoding='utf-8')
+    json_file = openJson("save_data.json", mode='r', encoding='utf-8')
     save_dict = json.load(json_file)
     save_dict["username"] = username
     json_file.close()
 
-    json_file = open("save_data.json", mode='w', encoding='utf-8')
+    json_file = openJson("save_data.json", mode='w', encoding='utf-8')
     json.dump(save_dict, json_file)
     json_file.close()
 
 
 def loadUsername():
-    json_file = open("save_data.json", mode='r', encoding='utf-8')
+    json_file = openJson("save_data.json", mode='r', encoding='utf-8')
     save_dict = json.load(json_file)
     json_file.close()
     return save_dict["username"]
@@ -70,25 +77,25 @@ def loadFile(start=False):
 
 
 def saveFileName(file_name):
-    json_file = open("save_data.json", mode='r', encoding='utf-8')
+    json_file = openJson("save_data.json", mode='r', encoding='utf-8')
     save_dict = json.load(json_file)
     save_dict["file_name"] = file_name
     json_file.close()
 
-    json_file = open("save_data.json", mode='w', encoding='utf-8')
+    json_file = openJson("save_data.json", mode='w', encoding='utf-8')
     json.dump(save_dict, json_file)
     json_file.close()
 
 
 def loadFileName():
-    json_file = open("save_data.json", mode='r', encoding='utf-8')
+    json_file = openJson("save_data.json", mode='r', encoding='utf-8')
     save_dict = json.load(json_file)
     json_file.close()
     return save_dict["file_name"]
 
 
 def unicodeToTextArray(array, inverse=False):
-    json_file = open("nonunicode.json", mode='r', encoding='utf-8')
+    json_file = openJson("nonunicode.json", mode='r', encoding='utf-8')
     song_dict = json.load(json_file)
     result = []
 
@@ -112,7 +119,7 @@ def unicodeToTextArray(array, inverse=False):
 
 
 def unicodeToText(string, inverse=False):
-    json_file = open("nonunicode.json", mode='r', encoding='utf-8')
+    json_file = openJson("nonunicode.json", mode='r', encoding='utf-8')
     song_dict = json.load(json_file)
     if not inverse:
         if string in song_dict:
@@ -259,7 +266,7 @@ def getSongJacket(song_name, difficulty):
     for i in replace_list:
         song_name = song_name.replace(i, "")
 
-    all_files = os.listdir("arcaea_song_files/")  # list of all song jackets
+    all_files = listDir("arcaea_song_files/")  # list of all song jackets
 
     if song_name + "_" + difficulty.lower() + ".jpg" in all_files:
         return song_name + "_" + difficulty.lower() + ".jpg"
@@ -269,7 +276,8 @@ def getSongJacket(song_name, difficulty):
 
 
 def getBGList():
-    return os.listdir("backgrounds/")
+    return listDir("backgrounds")
+    # return os.listdir("/backgrounds/")
 
 
 def blur_pixmap(pixmap, radius):
