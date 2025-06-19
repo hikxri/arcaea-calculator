@@ -262,7 +262,7 @@ def getSongIndex(score_list, song_name, difficulty):
 
 def getSongJacket(song_name, difficulty):
     song_name = unicodeToText(song_name).lower().replace(" ", "_")
-    replace_list = ["!", "*", "#", "[", "]", "?", ":", ",", "|"]  # i manually renamed and checked every file
+    replace_list = ["!", "*", "#", "[", "]", "?", ":", ",", "|", "\""]  # i manually renamed and checked every file
     for i in replace_list:
         song_name = song_name.replace(i, "")
 

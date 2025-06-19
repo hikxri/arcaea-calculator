@@ -2,13 +2,13 @@
 
 A simple UI to input your Arcaea scores and generate your top entries as an image file. This is intended to be used with the **[Arcaea B30 Spreadsheet](https://docs.google.com/spreadsheets/d/1DsIGnVUOarLeUtdpEjA3Wr8O0kvy-8lSCaWkLVOPSv8/edit?usp=sharing)**. For more information, please see [**Usage: Usage With The Spreadsheet**](#usage-with-the-spreadsheet).
 
-The [scores.csv](scores.csv) blank template is updated as per `Arcaea v6.0.0`.
+The [scores.csv](scores.csv) blank template is updated as per `Arcaea v6.5.0`.
 
 For users, I recommend reading [**Installation: For Users**](#for-users) and [**Usage**](#usage)
 to help you get started!
 
-**IMPORTANT: Your scores file must be in Comma Separated Values (.csv) file extension.** The header of the file should
-be:
+**IMPORTANT: Your scores file must be in Comma Separated Values (.csv) file extension.** The header of the file must
+be (in this order):
 ```Title,Difficulty,Level,Chart Constant,Score,Note Count,PM Rating,Play Rating,Play Potential```
 .
 
@@ -84,13 +84,13 @@ jacket file has to meet these following criteria:
 - All spaces are replaced with underscores
     - For example, `Abstruse Dilemma.jpg` &#8594; `abstruse_dilemma.jpg`
 - The following symbols are removed:
-    - `!`, `*`, `#`, `[`, `]`, `?`, `:`, `,`, `|`
+    - `!`, `*`, `#`, `[`, `]`, `?`, `:`, `,`, `|`, `"`
 - For non-unicode song names, add another item with the updated, unicode-friendly song name in the `nonunicode.json`
   file.
     - For example, `{ ..., "ω4": "w4"}`
 
 ## Usage With The Spreadsheet
-Instead of inputting scores using the program, you can use the **[Arcaea B30 Spreadsheet](https://docs.google.com/spreadsheets/d/1DsIGnVUOarLeUtdpEjA3Wr8O0kvy-8lSCaWkLVOPSv8/edit?usp=sharing)**. For more information on how to use it, please read the **Instructions** sheet of the spreadsheet. For how to use with the program, read the **To use with The Program™** section of the sheet.
+Instead of inputting scores through the program, you can use the **[Arcaea B30 Spreadsheet](https://docs.google.com/spreadsheets/d/1DsIGnVUOarLeUtdpEjA3Wr8O0kvy-8lSCaWkLVOPSv8/edit?usp=sharing)**. For more information on how to use it, please read the **Instructions** sheet of the spreadsheet. For how to use with the program, read the **To use with The Program™** section of the sheet.
 
 ## Contributing
 
